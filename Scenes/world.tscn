@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=3 uid="uid://qj066hks71pi"]
+
+[ext_resource type="PackedScene" uid="uid://binqchkjcko2" path="res://Scenes/bg.tscn" id="1_8nv6w"]
+[ext_resource type="Script" path="res://Scripts/world.gd" id="1_13dbk"]
+[ext_resource type="PackedScene" uid="uid://bsynyo3ewtii4" path="res://Scenes/ground.tscn" id="2_21e61"]
+[ext_resource type="PackedScene" uid="uid://dn04c4ufihj4v" path="res://Scenes/dino.tscn" id="3_m7ywe"]
+
+[node name="World" type="Node"]
+script = ExtResource("1_13dbk")
+
+[node name="Bg" parent="." instance=ExtResource("1_8nv6w")]
+
+[node name="Ground" parent="." instance=ExtResource("2_21e61")]
+
+[node name="Dino" parent="." instance=ExtResource("3_m7ywe")]
+position = Vector2(21, 135)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0

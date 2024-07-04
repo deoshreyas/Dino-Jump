@@ -4,10 +4,9 @@ const DINO_START_POS = Vector2(21, 135)
 const CAM_START_POS = Vector2(0, 0)
 const GROUND_START_POS = Vector2(0, 0)
 var speed
-const START_SPEED = 2
+const START_SPEED = 5
 const MAX_SPEED = 25
 @onready var screen_size = get_window().size
-@onready var ground_height = $Ground.get_node("Sprite2D").texture.get_height()
 
 var score:
 	get:
@@ -18,8 +17,12 @@ var score:
 		
 var game_started = false
 
+var difficulty 
+const MAX_DIFFICULTY = 2
+
+var bird = preload("res://Scenes/bird.tscn")
 @export var obstacles : Array[PackedScene]
-var bird_heights = [40, 100, 150]
+var bird_heights = [115, 150]
 var current_obstacles = []
 var last_obs
 
@@ -34,11 +37,13 @@ func new_game():
 	$Ground.position = GROUND_START_POS
 	game_started = false
 	$HUD/Control/Begin.visible = true
+	difficulty = 0
 	
 func _process(_delta):
 	if game_started:
 		speed = START_SPEED + score / 5000
 		speed = clamp(speed, START_SPEED, MAX_SPEED)
+		adjust_difficulty()
 		
 		generate_obstacle()
 		
@@ -54,14 +59,25 @@ func _process(_delta):
 			$HUD/Control/Begin.visible = false
 	
 func generate_obstacle():
-	if current_obstacles.is_empty():
+	if current_obstacles.is_empty() or last_obs.position.x < score + randi_range(10, 150):
 		var obstacle_scene = obstacles.pick_random()
-		var obstacle = obstacle_scene.instantiate()
-		var obs_x = screen_size.x + 100
-		var obs_height = obstacle.get_node("Sprite2D").texture.get_height()
-		var obs_scale = obstacle.scale
-		var obs_y = screen_size.y - ground_height.y - (obs_height + obs_scale/2) + 5
-		last_obs = obstacle
-		obstacle.position = Vector2(obs_x, obs_y)
-		add_child(obstacle)
-		current_obstacles.append(obstacle)
+		var no_of_obstacles_to_spawn = difficulty + 1
+		for i in range(no_of_obstacles_to_spawn):
+			var obstacle = obstacle_scene.instantiate()
+			var obs_x = screen_size.x + score + 10 + (i*25)
+			var obs_y = 144 
+			last_obs = obstacle
+			obstacle.position = Vector2(obs_x, obs_y)
+			add_child(obstacle)
+			current_obstacles.append(obstacle)
+		if difficulty<=MAX_DIFFICULTY:
+			if [true, false].pick_random():
+				var obstacle = bird.instantiate()
+				var obs_x = screen_size.x + score + 50
+				var obs_y = bird_heights.pick_random()
+				obstacle.position = Vector2(obs_x, obs_y)
+				add_child(obstacle)
+				current_obstacles.append(obstacle)
+
+func adjust_difficulty():
+	difficulty = clamp(score / 5000, 0, MAX_DIFFICULTY) 

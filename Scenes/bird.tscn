@@ -1,6 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://b073unm2tl80m"]
+[gd_scene load_steps=10 format=3 uid="uid://b073unm2tl80m"]
 
 [ext_resource type="Texture2D" uid="uid://wwjxo4jw3anp" path="res://Assets/bird.png" id="1_b3boc"]
+[ext_resource type="Script" path="res://Scripts/bird.gd" id="1_vi8v1"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6nq3c"]
 atlas = ExtResource("1_b3boc")
@@ -46,6 +47,7 @@ radius = 8.0
 height = 22.0
 
 [node name="Bird" type="Area2D"]
+script = ExtResource("1_vi8v1")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_uolsi")
@@ -59,3 +61,9 @@ shape = SubResource("RectangleShape2D_26hyn")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(5, 0)
 shape = SubResource("CapsuleShape2D_6dxul")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+position = Vector2(20, 5.96046e-08)
+scale = Vector2(3.5, 1.1)
+
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]

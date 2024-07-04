@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://qj066hks71pi"]
+[gd_scene load_steps=10 format=3 uid="uid://qj066hks71pi"]
 
 [ext_resource type="PackedScene" uid="uid://binqchkjcko2" path="res://Scenes/bg.tscn" id="1_8nv6w"]
 [ext_resource type="Script" path="res://Scripts/world.gd" id="1_13dbk"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://bl0wxkmp8pbwg" path="res://Scenes/rock.tscn" id="4_q28mr"]
 [ext_resource type="PackedScene" uid="uid://cgb4aqck7vlyv" path="res://Scenes/stump.tscn" id="5_07frb"]
 [ext_resource type="PackedScene" uid="uid://dtjilx6udgrsy" path="res://Scenes/hud.tscn" id="5_ll65k"]
+[ext_resource type="Script" path="res://Scripts/manager.gd" id="9_4wtx2"]
 
 [node name="World" type="Node"]
 script = ExtResource("1_13dbk")
@@ -24,3 +25,7 @@ position = Vector2(21, 135)
 anchor_mode = 0
 
 [node name="HUD" parent="." instance=ExtResource("5_ll65k")]
+
+[node name="Node" type="Node" parent="."]
+process_mode = 2
+script = ExtResource("9_4wtx2")

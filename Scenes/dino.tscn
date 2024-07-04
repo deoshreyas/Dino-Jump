@@ -154,10 +154,10 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tih3g"]
-size = Vector2(18, 10)
+size = Vector2(13, 10)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_f6csd"]
-size = Vector2(15, 17)
+size = Vector2(13, 17)
 
 [node name="Dino" type="CharacterBody2D"]
 z_index = 1
@@ -171,11 +171,12 @@ animation = &"duck"
 autoplay = "idle"
 
 [node name="DuckCol" type="CollisionShape2D" parent="."]
-position = Vector2(3, 4)
+position = Vector2(2.5, 4)
 shape = SubResource("RectangleShape2D_tih3g")
+disabled = true
 
 [node name="RunCol" type="CollisionShape2D" parent="."]
-position = Vector2(1.5, 0.5)
+position = Vector2(2.5, 0.5)
 shape = SubResource("RectangleShape2D_f6csd")
 
 [node name="JumpSound" type="AudioStreamPlayer2D" parent="."]

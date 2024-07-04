@@ -22,7 +22,6 @@ const MAX_DIFFICULTY = 2
 
 var bird = preload("res://Scenes/bird.tscn")
 @export var obstacles : Array[PackedScene]
-var bird_heights = [115, 150]
 var current_obstacles = []
 var last_obs
 
@@ -52,14 +51,20 @@ func _process(_delta):
 		score += speed
 		if $Camera2D.position.x - $Ground.position.x > screen_size.x * 1.5:
 			$Ground.position.x += screen_size.x
+		
+		for obs in current_obstacles:
+			if obs.position.x < $Camera2D.position.x - screen_size.x:
+				obs.queue_free()
+				current_obstacles.erase(obs)
 	else:
 		$Dino/AnimatedSprite2D.play("idle")
 		if Input.is_action_just_pressed("jump"):
 			game_started = true
 			$HUD/Control/Begin.visible = false
+			get_tree().paused = false
 	
 func generate_obstacle():
-	if current_obstacles.is_empty() or last_obs.position.x < score + randi_range(10, 150):
+	if current_obstacles.is_empty() or last_obs.position.x < score + randi_range(300, 500):
 		var obstacle_scene = obstacles.pick_random()
 		var no_of_obstacles_to_spawn = difficulty + 1
 		for i in range(no_of_obstacles_to_spawn):
@@ -70,14 +75,30 @@ func generate_obstacle():
 			obstacle.position = Vector2(obs_x, obs_y)
 			add_child(obstacle)
 			current_obstacles.append(obstacle)
-		if difficulty<=MAX_DIFFICULTY:
+			obstacle.body_entered.connect(obs_hit)
+		if difficulty==MAX_DIFFICULTY:
 			if [true, false].pick_random():
 				var obstacle = bird.instantiate()
-				var obs_x = screen_size.x + score + 50
-				var obs_y = bird_heights.pick_random()
+				var obs_x = screen_size.x + score + 10
+				var obs_y = randi_range(135, 160)
 				obstacle.position = Vector2(obs_x, obs_y)
 				add_child(obstacle)
 				current_obstacles.append(obstacle)
+				obstacle.body_entered.connect(obs_hit)
 
 func adjust_difficulty():
 	difficulty = clamp(score / 5000, 0, MAX_DIFFICULTY) 
+	
+func obs_hit(body):
+	if body is Dino:
+		game_over()
+
+func game_over():
+	game_started = false
+	$HUD/Control/Begin.visible = true
+	get_tree().paused = true
+	difficulty = 0 
+	score = 0 
+	for obs in current_obstacles:
+		obs.queue_free()
+	current_obstacles.clear()

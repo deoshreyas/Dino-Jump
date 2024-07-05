@@ -10,7 +10,7 @@ const MAX_SPEED = 25
 
 var score:
 	get:
-		return score 
+		return score
 	set(value):
 		score = value
 		$HUD/Control/Score.text = str(score/10)
@@ -25,17 +25,45 @@ var bird = preload("res://Scenes/bird.tscn")
 var current_obstacles = []
 var last_obs
 
+@onready var score_label = $HUD/Control/Score
+
+func set_hi_score_label(value):
+	$HUD/Control/HiScore.text = "HI-SCORE: " + str(value)
+
+func get_hi_score():
+	var save_file = FileAccess.open("user://save.data", FileAccess.READ)
+	if save_file!=null:
+		var high_score = save_file.get_32() 
+		return high_score
+	else:
+		var high_score = 0
+		save_file.store_32(0)
+		return high_score
+	
+func set_hi_score(value):
+	var save_file = FileAccess.open("user://save.data", FileAccess.WRITE)
+	save_file.store_32(value)
+
 func _ready():
 	new_game()
+	var high_score = get_hi_score()
+	set_hi_score_label(high_score)
+	
+func check_score():
+	if score!=null:
+		if score/10>get_hi_score():
+			set_hi_score(score/10)
+			set_hi_score_label(score/10)
+		else:
+			set_hi_score_label(get_hi_score())
 
 func new_game():
+	check_score()
 	score = 0
 	$Dino.position = DINO_START_POS
 	$Dino.velocity = Vector2(0, 0)
 	$Camera2D.position = CAM_START_POS
 	$Ground.position = GROUND_START_POS
-	game_started = false
-	$HUD/Control/Begin.visible = true
 	difficulty = 0
 	
 func _process(_delta):
@@ -80,7 +108,7 @@ func generate_obstacle():
 			if [true, false].pick_random():
 				var obstacle = bird.instantiate()
 				var obs_x = screen_size.x + score + 10
-				var obs_y = randi_range(135, 160)
+				var obs_y = randi_range(115, 160)
 				obstacle.position = Vector2(obs_x, obs_y)
 				add_child(obstacle)
 				current_obstacles.append(obstacle)
@@ -97,8 +125,3 @@ func game_over():
 	game_started = false
 	$HUD/Control/Begin.visible = true
 	get_tree().paused = true
-	difficulty = 0 
-	score = 0 
-	for obs in current_obstacles:
-		obs.queue_free()
-	current_obstacles.clear()

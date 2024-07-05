@@ -4,6 +4,7 @@
 
 [node name="Rock" type="Area2D"]
 scale = Vector2(0.75, 0.75)
+metadata/_edit_group_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_p4h7r")
